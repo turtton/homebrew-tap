@@ -1,0 +1,40 @@
+name: test-bot
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  test:
+    strategy:
+      matrix:
+        os: [macos-latest, ubuntu-24.04]
+      fail-fast: false
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - name: Set up Homebrew
+        uses: Homebrew/actions/setup-homebrew@1f8e202ffddf94def7f42f6fa3a482e821489f9c
+
+      - name: Cache Homebrew bottles
+        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae
+        with:
+          path: ~/Library/Caches/Homebrew
+          key: brew-${{ matrix.os }}-${{ github.sha }}
+          restore-keys: brew-${{ matrix.os }}-
+
+      - name: Install from source
+        run: |
+          brew install --build-from-source --verbose Formula/cnowledje.rb
+
+      - name: Run formula test
+        run: |
+          brew test --verbose cnowledje
+
+      - name: Audit formula
+        run: |
+          brew audit --strict --online cnowledje
