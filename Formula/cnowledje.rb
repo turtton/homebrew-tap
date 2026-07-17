@@ -18,6 +18,6 @@ class Cnowledje < Formula
 
   test do
     assert_match version.to_s, shell_output("#{bin}/cnowledje --version")
-    assert_match "Read-only Confluence & Jira CLI for Server/Data Center", shell_output("#{bin}/cnowledje --help")
+    assert_match "cnowledje provides safe, read-only access to Confluence pages and Jira issues", shell_output("#{bin}/cnowledje --help")
   end
 end
